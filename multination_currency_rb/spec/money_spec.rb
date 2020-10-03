@@ -2,10 +2,11 @@
 
 require_relative '../dollar'
 require_relative '../franc'
+require_relative '../money'
 
 RSpec.describe Dollar do
   let :dollar do
-    Dollar.new(amount)
+    Money.dollar(amount)
   end
 
   let :amount do
@@ -29,7 +30,7 @@ end
 
 RSpec.describe Franc do
   let :franc do
-    Franc.new(amount)
+    Money.franc(amount)
   end
 
   let :amount do
