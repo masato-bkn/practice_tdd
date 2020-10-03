@@ -18,14 +18,13 @@ RSpec.describe Dollar do
   end
 
   it '同じ金額の通貨であること' do
-    expect(Dollar.new(5).equals(Dollar.new(5))).to eq true
+    expect(Dollar.new(5).equal?(Dollar.new(5))).to eq true
   end
 
   it 'timeメソッドを呼び出してもdollarが変化しないこと' do
     expect(Dollar.new(10).amount).to eq dollar.times(2).amount
     expect(Dollar.new(15).amount).to eq dollar.times(3).amount
   end
-
 end
 
 RSpec.describe Franc do
@@ -43,7 +42,8 @@ RSpec.describe Franc do
   end
 
   it '同じ金額の通貨であること' do
-    expect(Franc.new(5).equals(Franc.new(5))).to eq true
+    expect(Franc.new(5).equal?(Franc.new(5))).to eq true
+    expect(Franc.new(5).equal?(Money.new(5))).to eq false
   end
 
   it 'timeメソッドを呼び出してもdollarが変化しないこと' do

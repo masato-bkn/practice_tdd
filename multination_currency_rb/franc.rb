@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
-class Franc
-  attr_accessor :amount
+require_relative 'money'
 
+class Franc < Money
   def initialize(amount)
-    @amount = amount
+    super(amount)
   end
 
   def times(multiplier)
     Franc.new(amount * multiplier)
-  end
-
-  def equals(object)
-    return false unless object.is_a?(Franc)
-    amount == object.amount
   end
 end
