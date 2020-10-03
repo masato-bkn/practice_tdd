@@ -1,31 +1,30 @@
 # frozen_string_literal: true
 
-#require_relative 'dollar'
-#require_relative 'franc'
-
 class Money
   attr_accessor :amount
 
-  def initialize(amount)
+  def initialize(amount, currency)
     @amount = amount
+    @currency = currency
   end
 
-  def time
-    raise NotImplementedError
+  def times(multiplier)
+    Money.new(amount * multiplier, currency)
   end
 
-  def equal?(object)
-    return false unless object.is_a?(Money)
+  def equal?(other)
+    return false unless other.is_a?(Money)
 
-    amount == object.amount && self.class == object.class
+    amount == other.amount && currency == other.currency
   end
 
-  # ファクトリーメソッドでサブクラスの存在を隠した
   def self.dollar(amount)
-    Dollar.new(amount)
+    Money.new(amount, 'USD')
   end
 
   def self.franc(amount)
-    Franc.new(amount)
+    Money.new(amount, 'CHF')
   end
+
+  attr_reader :currency
 end
