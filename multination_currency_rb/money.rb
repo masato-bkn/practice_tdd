@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
+require_relative 'sum'
+
 class Money
   attr_accessor :amount
 
   def initialize(amount, currency)
     @amount = amount
     @currency = currency
+  end
+
+  def plus(added)
+    Sum.new(self, added)
   end
 
   def times(multiplier)

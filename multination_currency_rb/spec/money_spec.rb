@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../money'
+require_relative '../bank'
 
 RSpec.describe Money do
   context 'ドルの場合' do
@@ -18,6 +19,11 @@ RSpec.describe Money do
 
     it '5ドル × 2 = 10ドルとなること' do
       expect(dollar.times(2).amount).to eq 10
+    end
+
+    it '5ドル + 5ドル = 10ドルとなること' do
+      sum = dollar.plus(dollar)
+      expect(Bank.reduce(sum, 'USD').amount).to eq(10)
     end
 
     it '同じ通貨で同じ金額であること' do
@@ -55,8 +61,13 @@ RSpec.describe Money do
       'CHF'
     end
 
-    it '5ドル × 2 = 10ドルとなること' do
+    it '5フラン × 2 = 10フランとなること' do
       expect(franc.times(2).amount).to eq 10
+    end
+
+    it '5フラン + 5フラン = 10フランとなること' do
+      sum = franc.plus(franc)
+      expect(Bank.reduce(sum, 'CHF').amount).to eq(10)
     end
 
     it '同じ金額の通貨であること' do
