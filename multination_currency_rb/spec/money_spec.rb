@@ -1,0 +1,94 @@
+# frozen_string_literal: true
+
+require_relative '../money'
+require_relative '../bank'
+
+RSpec.describe Money do
+  context 'ドルの場合' do
+    let :dollar do
+      Money.dollar(amount)
+    end
+
+    let :amount do
+      5
+    end
+
+    let :currency do
+      'USD'
+    end
+
+    it '5ドル × 2 = 10ドルとなること' do
+      expect(dollar.times(2).amount).to eq 10
+    end
+
+    it '5ドル + 5ドル = 10ドルとなること' do
+      sum = dollar.plus(dollar)
+      expect(Bank.reduce(sum, 'USD').amount).to eq(10)
+    end
+
+    it '同じ通貨で同じ金額であること' do
+      expect(dollar.equal?(dollar)).to eq true
+    end
+
+    it '金額が異なる場合、異なる金額の通貨であること' do
+      expect(dollar.equal?(Money.new(10, currency))).to eq false
+    end
+
+    it '通貨が異なる場合、異なる金額の通貨であること' do
+      expect(dollar.equal?(Money.new(10, 'CHF'))).to eq false
+    end
+
+    it '通貨単位がCHFであること' do
+      expect(Money.dollar(1).currency).to eq('USD')
+    end
+
+    it 'timeメソッドを呼び出してもdollarが変化しないこと' do
+      expect(Money.dollar(10).amount).to eq dollar.times(2).amount
+      expect(Money.dollar(15).amount).to eq dollar.times(3).amount
+    end
+  end
+
+  context 'フランの場合' do
+    let :franc do
+      Money.franc(amount)
+    end
+
+    let :amount do
+      5
+    end
+
+    let :currency do
+      'CHF'
+    end
+
+    it '5フラン × 2 = 10フランとなること' do
+      expect(franc.times(2).amount).to eq 10
+    end
+
+    it '5フラン + 5フラン = 10フランとなること' do
+      sum = franc.plus(franc)
+      expect(Bank.reduce(sum, 'CHF').amount).to eq(10)
+    end
+
+    it '同じ金額の通貨であること' do
+      expect(franc.equal?(Money.new(5, currency))).to eq true
+    end
+
+    it '金額が異なる場合、異なる金額の通貨であること' do
+      expect(franc.equal?(Money.new(10, currency))).to eq false
+    end
+
+    it '通貨が異なる場合、異なる金額の通貨であること' do
+      expect(franc.equal?(Money.new(10, 'UDF'))).to eq false
+    end
+
+    it '通貨単位がCHFであること' do
+      expect(Money.franc(1).currency).to eq('CHF')
+    end
+
+    it 'timeメソッドを呼び出してもfrancが変化しないこと' do
+      expect(Money.new(10, currency).amount).to eq franc.times(2).amount
+      expect(Money.new(15, currency).amount).to eq franc.times(3).amount
+    end
+  end
+end
