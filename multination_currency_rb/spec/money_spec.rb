@@ -91,4 +91,34 @@ RSpec.describe Money do
       expect(Money.new(15, currency).amount).to eq franc.times(3).amount
     end
   end
+
+  context '為替レートについて' do
+    before :each do
+      bank.add_rate(from, to, rate)
+    end
+
+    let :bank do
+      Bank.new
+    end
+
+    let :rate do
+      2
+    end
+
+    let :from do
+      "USD"
+    end
+
+    let :to do
+      "CHF"
+    end
+
+    it 'ドル->フランの為替レートが1:2であること'do
+      expect(bank.rate(from, to)).to eq(2)
+    end
+
+    it 'ドル->フランの為替レートが1:3に変更できること'do
+      expect {bank.add_rate(from, to, 3)}.to change{ bank.rate(from, to) }.from(2).to(3)
+    end
+  end
 end
