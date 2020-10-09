@@ -9,6 +9,10 @@ RSpec.describe Money do
       Money.dollar(amount)
     end
 
+    let :bank do
+      Bank.new
+    end
+
     let :amount do
       5
     end
@@ -23,7 +27,7 @@ RSpec.describe Money do
 
     it '5ドル + 5ドル = 10ドルとなること' do
       sum = dollar.plus(dollar)
-      expect(Bank.reduce(sum, 'USD').amount).to eq(10)
+      expect(bank.reduce(sum, 'USD').amount).to eq(10)
     end
 
     it '同じ通貨で同じ金額であること' do
@@ -49,6 +53,10 @@ RSpec.describe Money do
   end
 
   context 'フランの場合' do
+    let :bank do
+      Bank.new
+    end
+
     let :franc do
       Money.franc(amount)
     end
@@ -67,7 +75,7 @@ RSpec.describe Money do
 
     it '5フラン + 5フラン = 10フランとなること' do
       sum = franc.plus(franc)
-      expect(Bank.reduce(sum, 'CHF').amount).to eq(10)
+      expect(bank.reduce(sum, 'CHF').amount).to eq(10)
     end
 
     it '同じ金額の通貨であること' do
@@ -119,6 +127,60 @@ RSpec.describe Money do
 
     it 'ドル->フランの為替レートが1:3に変更できること'do
       expect {bank.add_rate(from, to, 3)}.to change{ bank.rate(from, to) }.from(2).to(3)
+    end
+  end
+
+  context '複数通貨の組み合わせ' do
+    let :bank do
+      Bank.new
+    end
+
+    let :dollar do
+      Money.dollar(5)
+    end
+
+    let :franc do
+      Money.franc(10)
+    end
+
+    let :sum do
+      Sum.new(dollar, franc).plus(franc)
+    end
+
+    let :from do
+      "CHF"
+    end
+
+    let :to do
+      "USD"
+    end
+
+    context 'ドルとフランのレートが1:2のとき' do
+      before :each do
+        bank.add_rate(from, to, 2)
+      end
+
+      it '5ドル + 10フラン = 10ドルとなること' do
+        expect(bank.reduce(sum, "USD").amount).to eq(15)
+      end
+    end
+
+    context 'フランとドルのレートが2:1のとき' do
+      before :each do
+        bank.add_rate(from, to, 2)
+      end
+
+      let :from do
+        "USD"
+      end
+
+      let :to do
+        "CHF"
+      end
+
+      it '5ドル + 10フラン + 10フラン = 22.5フランとなること' do
+        expect(bank.reduce(sum, "CHF").amount).to eq(22.5)
+      end
     end
   end
 end

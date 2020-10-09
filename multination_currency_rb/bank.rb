@@ -10,8 +10,8 @@ class Bank
     @pairs = []
   end
 
-  def self.reduce(expression, to)
-    expression.reduce(to)
+  def reduce(expression, to)
+    expression.reduce(self, to)
   end
 
   def add_rate(from, to, rate)
@@ -20,8 +20,7 @@ class Bank
   end
 
   def rate(from, to)
-    p from
-    p to
+    return 1 if from == to
     @pairs.select { |v| pair?(v, from, to)}.first.rate
   end
 
