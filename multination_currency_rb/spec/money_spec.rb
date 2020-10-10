@@ -4,100 +4,54 @@ require_relative '../money'
 require_relative '../bank'
 
 RSpec.describe Money do
-  context 'ドルの場合' do
-    let :dollar do
-      Money.dollar(amount)
+  shared_context '単一通貨の計算について' do
+    let :money do
+      Money.dollar(5)
     end
 
     let :bank do
       Bank.new
-    end
-
-    let :amount do
-      5
     end
 
     let :currency do
       'USD'
     end
 
-    it '5ドル × 2 = 10ドルとなること' do
-      expect(dollar.times(2).amount).to eq 10
+    let :other do
+      'CHF'
     end
 
-    it '5ドル + 5ドル = 10ドルとなること' do
-      sum = dollar.plus(dollar)
-      expect(bank.reduce(sum, 'USD').amount).to eq(10)
+    it '5 × 2 = 10となること' do
+      expect(money.times(2).amount).to eq 10
+    end
+
+    it '5 + 5 = 10となること' do
+      expect(bank.reduce(money.plus(money), 'USD').amount).to eq(10)
     end
 
     it '同じ通貨で同じ金額であること' do
-      expect(dollar.equal?(dollar)).to eq true
+      expect(money.equal?(money)).to eq true
     end
 
-    it '金額が異なる場合、異なる金額の通貨であること' do
-      expect(dollar.equal?(Money.new(10, currency))).to eq false
+    it '金額が異なる場合、異なる通貨であること' do
+      expect(money.equal?(Money.new(10, other))).to eq false
     end
 
-    it '通貨が異なる場合、異なる金額の通貨であること' do
-      expect(dollar.equal?(Money.new(10, 'CHF'))).to eq false
-    end
-
-    it '通貨単位がCHFであること' do
-      expect(Money.dollar(1).currency).to eq('USD')
-    end
-
-    it 'timeメソッドを呼び出してもdollarが変化しないこと' do
-      expect(Money.dollar(10).amount).to eq dollar.times(2).amount
-      expect(Money.dollar(15).amount).to eq dollar.times(3).amount
+    it '通貨単位がcurrencyであること' do
+      expect(Money.dollar(1).currency).to eq(currency)
     end
   end
 
+  context 'ドルの場合' do
+    include_context '単一通貨の計算について'
+  end
+
   context 'フランの場合' do
-    let :bank do
-      Bank.new
-    end
-
-    let :franc do
-      Money.franc(amount)
-    end
-
-    let :amount do
-      5
-    end
-
     let :currency do
       'CHF'
     end
 
-    it '5フラン × 2 = 10フランとなること' do
-      expect(franc.times(2).amount).to eq 10
-    end
-
-    it '5フラン + 5フラン = 10フランとなること' do
-      sum = franc.plus(franc)
-      expect(bank.reduce(sum, 'CHF').amount).to eq(10)
-    end
-
-    it '同じ金額の通貨であること' do
-      expect(franc.equal?(Money.new(5, currency))).to eq true
-    end
-
-    it '金額が異なる場合、異なる金額の通貨であること' do
-      expect(franc.equal?(Money.new(10, currency))).to eq false
-    end
-
-    it '通貨が異なる場合、異なる金額の通貨であること' do
-      expect(franc.equal?(Money.new(10, 'UDF'))).to eq false
-    end
-
-    it '通貨単位がCHFであること' do
-      expect(Money.franc(1).currency).to eq('CHF')
-    end
-
-    it 'timeメソッドを呼び出してもfrancが変化しないこと' do
-      expect(Money.new(10, currency).amount).to eq franc.times(2).amount
-      expect(Money.new(15, currency).amount).to eq franc.times(3).amount
-    end
+    include_context '単一通貨の計算について'
   end
 
   context '為替レートについて' do
@@ -114,23 +68,23 @@ RSpec.describe Money do
     end
 
     let :from do
-      "USD"
+      'USD'
     end
 
     let :to do
-      "CHF"
+      'CHF'
     end
 
-    it 'ドル->フランの為替レートが1:2であること'do
+    it 'ドル->フランの為替レートが1:2であること' do
       expect(bank.rate(from, to)).to eq(2)
     end
 
-    it 'ドル->フランの為替レートが1:3に変更できること'do
-      expect {bank.add_rate(from, to, 3)}.to change{ bank.rate(from, to) }.from(2).to(3)
+    it 'ドル->フランの為替レートが1:3に変更できること' do
+      expect { bank.add_rate(from, to, 3) }.to change { bank.rate(from, to) }.from(2).to(3)
     end
   end
 
-  context '複数通貨の組み合わせ' do
+  context '複数通貨の計算について' do
     let :bank do
       Bank.new
     end
@@ -148,11 +102,11 @@ RSpec.describe Money do
     end
 
     let :from do
-      "CHF"
+      'CHF'
     end
 
     let :to do
-      "USD"
+      'USD'
     end
 
     context 'ドルとフランのレートが1:2のとき' do
@@ -161,7 +115,7 @@ RSpec.describe Money do
       end
 
       it '5ドル + 10フラン = 10ドルとなること' do
-        expect(bank.reduce(sum, "USD").amount).to eq(15)
+        expect(bank.reduce(sum, 'USD').amount).to eq(15)
       end
     end
 
@@ -171,15 +125,15 @@ RSpec.describe Money do
       end
 
       let :from do
-        "USD"
+        'USD'
       end
 
       let :to do
-        "CHF"
+        'CHF'
       end
 
       it '5ドル + 10フラン + 10フラン = 22.5フランとなること' do
-        expect(bank.reduce(sum, "CHF").amount).to eq(22.5)
+        expect(bank.reduce(sum, 'CHF').amount).to eq(22.5)
       end
     end
   end
