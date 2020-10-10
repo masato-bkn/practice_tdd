@@ -12,7 +12,7 @@ class Money
 
   def reduce(bank, to)
     rate = bank.rate(@currency, to)
-    Money.new(@amount/rate.to_f, to)
+    Money.new(@amount / rate.to_f, to)
   end
 
   def plus(added)

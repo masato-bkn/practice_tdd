@@ -15,13 +15,14 @@ class Bank
   end
 
   def add_rate(from, to, rate)
-    @pairs&.reject! { |v| p pair?(v, from, to)} unless @pairs.empty?
+    @pairs&.reject! { |v| p pair?(v, from, to) } unless @pairs.empty?
     @pairs << Pair.new(from, to, rate)
   end
 
   def rate(from, to)
     return 1 if from == to
-    @pairs.select { |v| pair?(v, from, to)}.first.rate
+
+    @pairs.select { |v| pair?(v, from, to) }.first.rate
   end
 
   private
